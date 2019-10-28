@@ -9,19 +9,19 @@ Such strings should be moved in a dedicated resource file for translation purpos
 
 **Scan** workspace documents, and **navigate** from string to string in source code:
 
-![demo-scan-workspace](readme_assets/demo-scan-workspace.gif)
+![demo-scan-workspace](https://raw.githubusercontent.com/michelcaradec/string-checker-js/master/readme_assets/demo-scan-workspace.gif)
 
 **Switch** view to browse detected strings:
 
-![demo-switch-view](readme_assets/demo-switch-view.gif)
+![demo-switch-view](https://raw.githubusercontent.com/michelcaradec/string-checker-js/master/readme_assets/demo-switch-view.gif)
 
 Add **custom rules** to improve string detection:
 
-![demo-exclude-token](readme_assets/demo-exclude-token.gif)
+![demo-exclude-token](https://raw.githubusercontent.com/michelcaradec/string-checker-js/master/readme_assets/demo-exclude-token.gif)
 
 **Search** for strings in view:
 
-![demo-filter](readme_assets/demo-filter.gif)
+![demo-filter](https://raw.githubusercontent.com/michelcaradec/string-checker-js/master/readme_assets/demo-filter.gif)
 
 ### Detection providers
 
@@ -40,7 +40,7 @@ The `string.checker.js.testString` [command](#extension-settings) brings a conve
 
 <!-- TODO: Image URLs in README.md and CHANGELOG.md need to resolve to https URLs. -->
 
-![demo-test-string](readme_assets/demo-test-string.gif)
+![demo-test-string](https://raw.githubusercontent.com/michelcaradec/string-checker-js/master/readme_assets/demo-test-string.gif)
 
 ## Requirements
 
