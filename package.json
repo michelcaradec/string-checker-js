@@ -1,0 +1,286 @@
+{
+	"name": "string-checker-js",
+	"displayName": "String Checker JS",
+	"description": "Scan TypeScript and JavaScript documents for non-technical strings",
+	"icon": "assets/string-checker-js-logo.png",
+	"publisher": "michel-caradec",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/michelcaradec/string-checker-js"
+	},
+	"license": "MIT",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.38.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Other"
+	],
+	"activationEvents": [
+		"onCommand:string.checker.js.scanDocument",
+		"onCommand:string.checker.js.scanDocumentIncludeAll",
+		"onCommand:string.checker.js.scanDocumentWorkspace",
+		"onCommand:string.checker.js.scanDocumentWorkspaceIncludeAll",
+		"onCommand:string.checker.js.switchView",
+		"onCommand:string.checker.js.filterTokens",
+		"onCommand:string.checker.js.testString",
+		"onCommand:string.checker.js.showVersion"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "string.checker.js.scanDocumentWorkspace",
+				"title": "Scan workspace documents",
+				"icon": "assets/scan-workspace.svg",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.scanDocumentWorkspaceIncludeAll",
+				"title": "Scan workspace documents for any string",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.scanDocument",
+				"title": "Scan this document",
+				"icon": "assets/scan-document.svg",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.scanDocumentIncludeAll",
+				"title": "Scan this document for any string",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.switchView",
+				"title": "Switch between file/token and token/file view",
+				"icon": "assets/switch.svg",
+				"enablement": "view == string-checker-js-view",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.excludeParentFolderPath",
+				"enablement": "view == string-checker-js-view && viewItem == item-file",
+				"title": "Exclude parent folder path",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.excludeParentFolderName",
+				"enablement": "view == string-checker-js-view && viewItem == item-file",
+				"title": "Exclude parent folder name",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.excludeFilePath",
+				"enablement": "view == string-checker-js-view && viewItem == item-file",
+				"title": "Exclude file path",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.excludeFileName",
+				"enablement": "view == string-checker-js-view && viewItem == item-file",
+				"title": "Exclude file name",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.includeToken",
+				"enablement": "view == string-checker-js-view && viewItem == item-token",
+				"title": "Include token",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.excludeToken",
+				"enablement": "view == string-checker-js-view && viewItem == item-token",
+				"title": "Exclude token",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.filterTokens",
+				"title": "Filter tokens",
+				"icon": "assets/filter.svg",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.testString",
+				"title": "Test string",
+				"category": "String Checker JS"
+			},
+			{
+				"command": "string.checker.js.showVersion",
+				"title": "Show version",
+				"category": "String Checker JS"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "string.checker.js.scanDocumentWorkspace",
+					"when": "view == string-checker-js-view"
+				},
+				{
+					"command": "string.checker.js.scanDocumentWorkspace",
+					"when": "view == string-checker-js-view",
+					"group": "navigation"
+				},
+				{
+					"command": "string.checker.js.scanDocumentWorkspaceIncludeAll",
+					"when": "view == string-checker-js-view"
+				},
+				{
+					"command": "string.checker.js.scanDocument",
+					"when": "view == string-checker-js-view"
+				},
+				{
+					"command": "string.checker.js.scanDocument",
+					"when": "view == string-checker-js-view",
+					"group": "navigation"
+				},
+				{
+					"command": "string.checker.js.scanDocumentIncludeAll",
+					"when": "view == string-checker-js-view"
+				},
+				{
+					"command": "string.checker.js.switchView",
+					"when": "view == string-checker-js-view"
+				},
+				{
+					"command": "string.checker.js.switchView",
+					"when": "view == string-checker-js-view",
+					"group": "navigation"
+				},
+				{
+					"command": "string.checker.js.filterTokens",
+					"when": "view == string-checker-js-view",
+					"group": "navigation"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "string.checker.js.excludeParentFolderPath",
+					"when": "view == string-checker-js-view && viewItem == item-file"
+				},
+				{
+					"command": "string.checker.js.excludeParentFolderName",
+					"when": "view == string-checker-js-view && viewItem == item-file"
+				},
+				{
+					"command": "string.checker.js.excludeFileName",
+					"when": "view == string-checker-js-view && viewItem == item-file"
+				},
+				{
+					"command": "string.checker.js.excludeFilePath",
+					"when": "view == string-checker-js-view && viewItem == item-file"
+				},
+				{
+					"command": "string.checker.js.includeToken",
+					"when": "view == string-checker-js-view && viewItem == item-token"
+				},
+				{
+					"command": "string.checker.js.excludeToken",
+					"when": "view == string-checker-js-view && viewItem == item-token"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "string-checker-js-bar",
+					"title": "String Checker JS",
+					"icon": "assets/activity-bar.svg"
+				}
+			]
+		},
+		"views": {
+			"string-checker-js-bar": [
+				{
+					"id": "string-checker-js-view",
+					"name": "Tokens"
+				}
+			]
+		},
+		"configuration": {
+			"title": "string-checker-js",
+			"properties": {
+				"string-checker-js.file-extension": {
+					"type": "[string]",
+					"default": [
+						".ts",
+						".tsx",
+						".js",
+						".jsx"
+					],
+					"description": "Set workspace file extensions to include in document scan."
+				},
+				"string-checker-js.folder-name-exclude": {
+					"type": "[string]",
+					"default": [
+						"node_modules"
+					],
+					"description": "Set workspace folder names to exclude in document scan."
+				},
+				"string-checker-js.workspace.file-max": {
+					"type": "number",
+					"default": 100,
+					"minimum": 0,
+					"maximum": 500,
+					"description": "Set maximum number of files to process while executing workspace documents scan."
+				},
+				"string-checker-js.entropy.threshold": {
+					"type": "number",
+					"default": 3,
+					"minimum": 0,
+					"description": "Set entropy detection threshold."
+				},
+				"string-checker-js.language.languages-check": {
+					"type": "[string]",
+					"default": [
+						"fra", "eng", "spa", "ita"
+					],
+					"markdownDescription": "Set languages to detect (see [franc](https://github.com/wooorm/franc) library)."
+				},
+				"string-checker-js.variable.word-min-length": {
+					"type": "number",
+					"default": 5,
+					"minimum": 0,
+					"description": "Set variable detection minimum word length. All words under this length will be detected as technical items."
+				},
+				"string-checker-js.variable.word-max-length": {
+					"type": "number",
+					"default": 20,
+					"minimum": 10,
+					"description": "Set variable detection maximum word length. All words above this length will be detected as technical items."
+				},
+				"string-checker-js.parser.jquery-exclude": {
+					"type": "boolean",
+					"default": true,
+					"description": "Exclude jQuery statements from scan."
+				},
+				"string-checker-js.parser.jquery-identifier": {
+					"type": "string",
+					"default": "$",
+					"description": "jQuery identifier (default is '$')."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^5.2.6",
+		"@types/node": "^10.12.21",
+		"@types/vscode": "^1.38.0",
+		"glob": "^7.1.4",
+		"mocha": "^6.1.4",
+		"tslint": "^5.12.1",
+		"typescript": "^3.6.4"
+	},
+	"dependencies": {
+		"franc": "^4.1.0",
+		"typescript": "^3.6.4"
+	}
+}
