@@ -11,6 +11,10 @@ export class ClassNameDetect implements IDetectProvider {
             return [ConfidenceLevel.Technical, 'javascript'];
         }
 
+        if (/^rgba?\([\d\s,\.]+\)$/m.test(text)) {
+            return [ConfidenceLevel.Technical, 'javascript'];
+        }
+
         if (text.search(/fa[rs]? fa(-[^-]*)*/g) >= 0) {
             return [ConfidenceLevel.Technical, 'font awesome'];
         }

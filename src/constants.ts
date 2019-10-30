@@ -1,6 +1,6 @@
 export class Constants {
     static readonly ExtensionName = 'string-checker-js';
-    static readonly ExtensionVersion = 'v0.0.1';
+    static readonly ExtensionVersion = 'v0.0.2';
     static readonly ExtensionID = 'string-checker-js';
     static readonly ItemStringPrefix = 'string:';
     static readonly ItemRegexPrefix = 'regex:';

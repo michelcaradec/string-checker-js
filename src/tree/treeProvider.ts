@@ -97,8 +97,6 @@ export class TreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
     //#region Filter
 
-    // TODO (v2) : Use `TreeItemLabel` (see VSCode Insider version) when available to highlight tree items when in filtered state.
-
     private _filter?: string;
 
     get filter(): string | undefined {
@@ -143,7 +141,6 @@ export class TreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                     return undefined;
                 } else if (this._files.length > 0) {
                     // Files
-                    // FIXME: Files with no tokens (in filtered view) will still be displayed.
                     const sorted = this._files.sort((a, b) => a.label!.localeCompare(b.label!));
 
                     sorted.forEach(it => it.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed);
@@ -188,20 +185,6 @@ export class TreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                 throw new Error(`Not supported view type ${this._viewType}`);
         }
     }
-
-    // private getConnectedItems(item: vscode.TreeItem): vscode.TreeItem[] {
-    //     if (item instanceof TreeItemFile) {
-    //         const file = <TreeItemFile>item;
-    //         return this.tokens.filter(it => it.file === file);
-    //     } else if (item instanceof TreeItemToken) {
-    //         const token = <TreeItemToken>item;
-    //         // Files where this token appears
-    //         return this.tokens.filter(it => it.label === token.label)
-    //             .map(it => TreeItemFile.CreateT2FInstance(it.file!.uri, it.token!.positions));
-    //     } else {
-    //         return [];
-    //     }
-    // }
 
     getTreeItem(element: any): vscode.TreeItem | Thenable<vscode.TreeItem> {
         return <vscode.TreeItem>element;

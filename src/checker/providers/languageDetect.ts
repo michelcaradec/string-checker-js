@@ -16,7 +16,6 @@ export class LanguageDetect implements IDetectProvider {
         const languages: [[string, number]] = franc.all(text, { only: filter });
         const language: string = languages[0][0];
 
-        // FIXME: Details on detected language are somewhat confusing (especially for short strings) and might not be relevant to display.
         return language === UndefinedLanguage ? [ConfidenceLevel.Unknown, ''] : [ConfidenceLevel.Message, `lang=${language}`];
     }
 }

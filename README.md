@@ -38,8 +38,6 @@ Strings are evaluated by different providers, each being dedicated to a specific
 
 The `string.checker.js.testString` [command](#extension-settings) brings a convenient way to test all providers for a given string.
 
-<!-- TODO: Image URLs in README.md and CHANGELOG.md need to resolve to https URLs. -->
-
 ![demo-test-string](https://raw.githubusercontent.com/michelcaradec/string-checker-js/master/readme_assets/demo-test-string.gif)
 
 ## Requirements
@@ -66,19 +64,7 @@ This extension contributes the following settings:
 - `string.checker.js.testString`: test a string with all detection [providers](#detection-providers).
 - `string.checker.js.showVersion`: display String Checker JS version.
 
-- [1] **Path exclusion** is based on the full path (`/path/to/my/file.js`), while **name exclusion** only uses the last part (`file.js`for a file, `my`for a folder), which means if the same name is found in another folder, it will be excluded too.
-
-## Known Issues
-
-Here are a few common issues.
-
-- String detection by language provider is based on statistical analysis. The longer the string, the more accurate the detection.
-
-## Release Notes
-
-### 0.0.1
-
-Initial release.
+- [1] **Path exclusion** is based on the full path (`/path/to/my/file.js`), while **name exclusion** only uses the last part (`file.js` for a file, `my` for a folder), which means if the same name is found in another folder, it will be excluded too.
 
 ## Mentions
 

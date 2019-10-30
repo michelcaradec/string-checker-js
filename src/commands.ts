@@ -215,7 +215,6 @@ export class Commands {
     }
 
     static async filterTokens(tree: TreeProvider): Promise<void> {
-        // FIXME: Make filter command icon reflect filtered state.
         const text = await vscode.window.showInputBox({ value: tree.filter, prompt: Messages.FilterToken, placeHolder: Messages.EnterString });
         if (text === undefined) {
             return;

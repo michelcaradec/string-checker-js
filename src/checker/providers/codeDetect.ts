@@ -57,6 +57,11 @@ export class CodeDetect implements IDetectProvider {
             return [ConfidenceLevel.Technical, 'html'];
         }
 
+        if (/^[A-Z_][A-Z\d_]+$/.test(text)) {
+            // Environment variable.
+            return [ConfidenceLevel.Technical, 'env'];
+        }
+
         const posSpace = text.search(/\s/g);
         if (posSpace < 0) {
             // No white space...
@@ -83,8 +88,6 @@ export class CodeDetect implements IDetectProvider {
                 return [ConfidenceLevel.Technical, 'word'];
             }
         }
-
-        // FIXME: Exclude environment variables (`MONGODB_URI_LOCAL`).
 
         return [ConfidenceLevel.Unknown, ''];
     }

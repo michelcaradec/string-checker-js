@@ -8,8 +8,6 @@ export class KeywordsDetect implements IDetectProvider {
     private _messageList: UserDictionary;
 
     constructor() {
-        // FIXME: Substitute `||` with coalesce operator `??` when TypeScript 3.7 will be available.
-        // https://devblogs.microsoft.com/typescript/announcing-typescript-3-7-beta/
         this._technicalList = UserDictionaryFactory.createInstance(DictionaryType.ExcludeToken) || new UserDictionary();
         this._messageList = UserDictionaryFactory.createInstance(DictionaryType.IncludeToken) || new UserDictionary();
     }

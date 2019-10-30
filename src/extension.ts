@@ -7,9 +7,6 @@ export function activate(context: vscode.ExtensionContext) {
 	const tree = new TreeProvider();
 	const treeView = vscode.window.createTreeView('string-checker-js-view', { treeDataProvider: tree});
 
-	// TODO: provide sample files (activating all providers)
-	// TODO: (v2) scanDocumentsInFolder. Requires command on File Explorer items.
-	// TODO: (v2) Search bar in TreeView to filter items by text.
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider('string-checker-js-view', tree),
 		treeView,
