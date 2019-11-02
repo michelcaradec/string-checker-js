@@ -33,10 +33,10 @@ Strings are evaluated by different providers, each being dedicated to a specific
 | Class provider | Detects strings as **class names** or **expressions**. | "use strict" will be detected as JavaScript expression. |
 | Code provider | Detects strings as **code** (variable names). | "../path/to/my/file" will be detected as a path.<br>"someVariable" will be detected as a camel case variable. |
 | Natural language provider | Detects strings as **natural language**. | ["Ceci n'est pas une pipe"](https://en.wikipedia.org/wiki/Ren%C3%A9_Magritte) will be detected as french language. |
-| Entropy provider | Detects string as **[Gibberish](https://en.wikipedia.org/wiki/Gibberish)**.<br>String [entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory)) [1] threshold can be configured in settings (`entropy.threshold`, default = 3). | "abbcccddddeeeee" has an entropy of 2.44.<br>"dd/MM/yyyy hh:mm:ss" has an entropy of 2.88.<br>["Gloubi-boulga"](https://fr.wikipedia.org/wiki/Gloubi-boulga) has an entropy of 2.75. |
+| Entropy provider | Detects string as **[Gibberish](https://en.wikipedia.org/wiki/Gibberish)**.<br>String [entropy](https://en.wikipedia.org/wiki/Entropy_(information_theory)) [1] threshold can be configured in settings (`entropy.threshold`, default = 3). | "abbcccddddeeeee" has an entropy of 2.15.<br>"dd/MM/yyyy hh:mm:ss" has an entropy of 2.44.<br>["Gloubi-boulga"](https://fr.wikipedia.org/wiki/Gloubi-boulga) has an entropy of 2.75. |
 | String provider | **Pass-through** detection. | *Any string will be detected as such.* |
 
-- [1] Starting at version v0.0.3, **string entropy** is computed after removing non-alphabetical characters.
+- [1] Starting at version v0.0.3, **entropy** is computed after removing non-alphabetical characters from a lower case version of the string.
 
 The `string.checker.js.testString` [command](#extension-settings) brings a convenient way to test all providers for a given string.
 
