@@ -9,7 +9,7 @@
 		"url": "https://github.com/michelcaradec/string-checker-js"
 	},
 	"license": "MIT",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"engines": {
 		"vscode": "^1.38.0"
 	},
@@ -212,18 +212,26 @@
 					],
 					"description": "Set workspace file extensions to include in document scan."
 				},
+				"string-checker-js.file-extension-exclude": {
+					"type": "[string]",
+					"default": [
+						".d.ts",
+						".min.js"
+					],
+					"description": "Set workspace file extensions to exclude from document scan."
+				},
 				"string-checker-js.folder-name-exclude": {
 					"type": "[string]",
 					"default": [
 						"node_modules"
 					],
-					"description": "Set workspace folder names to exclude in document scan."
+					"description": "Set workspace folder names to exclude from document scan."
 				},
 				"string-checker-js.workspace.file-max": {
 					"type": "number",
 					"default": 100,
 					"minimum": 0,
-					"maximum": 500,
+					"maximum": 1000,
 					"description": "Set maximum number of files to process while executing workspace documents scan."
 				},
 				"string-checker-js.entropy.threshold": {
@@ -235,8 +243,12 @@
 				"string-checker-js.language.languages-check": {
 					"type": "[string]",
 					"default": [
-						"fra", "eng", "spa", "ita"
+						"fra",
+						"eng",
+						"spa",
+						"ita"
 					],
+					"description": "Set languages to detect (see franc (https://github.com/wooorm/franc) library).",
 					"markdownDescription": "Set languages to detect (see [franc](https://github.com/wooorm/franc) library)."
 				},
 				"string-checker-js.variable.word-min-length": {
@@ -250,6 +262,13 @@
 					"default": 20,
 					"minimum": 10,
 					"description": "Set variable detection maximum word length. All words above this length will be detected as technical items."
+				},
+				"string-checker-js.variable.non-alpha-ratio-threshold": {
+					"type": "number",
+					"default": 0.2,
+					"minimum": 0,
+					"maximum": 1,
+					"description": "Set non-alphabetical characters threshold."
 				},
 				"string-checker-js.parser.jquery-exclude": {
 					"type": "boolean",
@@ -280,6 +299,7 @@
 		"typescript": "^3.6.4"
 	},
 	"dependencies": {
+		"escape-string-regexp": "^2.0.0",
 		"franc": "^4.1.0",
 		"typescript": "^3.6.4"
 	}

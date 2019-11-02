@@ -48,7 +48,7 @@ export class UserDictionaryFactory {
                 const excludeFolders = new Set<string>(vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('folder-name-exclude')!);
                 if (excludeFolders.size > 0) {
                     merged = new UserDictionary(dict);
-                    excludeFolders.forEach(it => merged.add(ItemRegex.fromValue(`\\${path.sep}${it}$`)));
+                    excludeFolders.forEach(it => merged.add(ItemRegex.fromValue(`\\${path.sep}${ItemRegex.escape(it)}$`)));
                 }
                 break;
         }

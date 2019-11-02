@@ -9,7 +9,8 @@ import { DictionaryType } from '../enumerations';
 export class Files {
     private static _excludeFolders: UserDictionary;
     private static _excludeFiles: UserDictionary;
-    private static _extensions: Set<string>;
+    private static _extensionsInclude: string[];
+    private static _extensionsExclude: string[];
     private static _maxFiles: number;
 
     private static syncConfiguration(): void {
@@ -19,7 +20,8 @@ export class Files {
         this._excludeFiles = UserDictionaryFactory.mergeConfiguration(
             DictionaryType.ExcludeFile,
             UserDictionaryFactory.createInstance(DictionaryType.ExcludeFile, false)!);
-        this._extensions = new Set<string>(vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension')!);
+        this._extensionsInclude = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension') || [];
+        this._extensionsExclude = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension-exclude') || [];
         this._maxFiles = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('workspace.file-max')!;
     }
 
@@ -76,8 +78,13 @@ export class Files {
                 }
             }
 
-            const ext = path.extname(filename);
-            if (!this._extensions.has(ext)) {
+            // `path.extname()`is not used to support multiple dot extensions such as `*.d.ts`.
+            if (this._extensionsExclude.some(ext => filename.endsWith(ext))) {
+                continue;
+            }
+
+            if (this._extensionsInclude.length > 0
+                && !this._extensionsInclude.some(ext => filename.endsWith(ext))) {
                 continue;
             }
 

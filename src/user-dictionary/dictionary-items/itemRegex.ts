@@ -1,5 +1,6 @@
 import { IUserDictionaryItem } from "./userDictionaryItem";
 import { Constants } from "../../constants";
+import escapeStringRegexp = require('escape-string-regexp');
 
 export class ItemRegex implements IUserDictionaryItem {
     private static readonly _prefix = Constants.ItemRegexPrefix;
@@ -8,7 +9,7 @@ export class ItemRegex implements IUserDictionaryItem {
     private _workingValue: string;
     private _regex: RegExp;
 
-    constructor(rawValue: string, workingValue: string) {
+    private constructor(rawValue: string, workingValue: string) {
         this.rawValue = rawValue;
         this._workingValue = workingValue;
         try {
@@ -29,6 +30,10 @@ export class ItemRegex implements IUserDictionaryItem {
 
     static fromValue(value: string): IUserDictionaryItem {
         return new ItemRegex(this._prefix + value, value);
+    }
+
+    static escape(value: string): string {
+        return escapeStringRegexp(value);
     }
 
     compare(value: string): boolean {

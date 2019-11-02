@@ -9,12 +9,6 @@ export class UserDictionary {
         }
     }
 
-    // *getItems(): IterableIterator<IUserDictionaryItem> {
-    //     for (const item of this._dictionary.keys()) {
-    //         yield item;
-    //     }
-    // }
-
     add(item: IUserDictionaryItem): void {
         this._dictionary.add(item);
     }

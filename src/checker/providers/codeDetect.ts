@@ -2,10 +2,12 @@ import * as vscode from 'vscode';
 import { IDetectProvider } from "./detectProvider";
 import { ConfidenceLevel } from "../../enumerations";
 import { Constants } from '../../constants';
+import { isCamelCase, isPascalCase, getNonAlphaRatio } from '../../helpers/utils';
 
 export class CodeDetect implements IDetectProvider {
     private _minWordLength: number;
     private _maxWordLength: number;
+    private _nonAlphaThreshold: number;
     readonly name: string = 'Code provider';
 
     readonly isStopOnEval: boolean = true;
@@ -13,6 +15,7 @@ export class CodeDetect implements IDetectProvider {
     constructor() {
         this._minWordLength = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('variable.word-min-length')!;
         this._maxWordLength = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('variable.word-max-length')!;
+        this._nonAlphaThreshold = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('variable.non-alpha-ratio-threshold')!;
     }
 
     private static readonly _startChars = [
@@ -62,6 +65,31 @@ export class CodeDetect implements IDetectProvider {
             return [ConfidenceLevel.Technical, 'env'];
         }
 
+        if (/^\d.*$/.test(text)) {
+            // Starting with a digit.
+            return [ConfidenceLevel.Technical, 'digit'];
+        }
+
+        if (/^((d{2,3}|m{2,3}|yyyy|yy|hh|s{2,3})(\/|\-|:|\.|,| )?)+$/i.test(text)) {
+            // DateTime patterns.
+            return [ConfidenceLevel.Technical, 'datetime'];
+        }
+
+        if (/^img\d+x\d+\s/.test(text)) {
+            // img.
+            return [ConfidenceLevel.Technical, 'img'];
+        }
+
+        if (/ ?(>|<|\+|\*|=|\/) ?/.test(text)) {
+            // Text with mathematical symbols.
+            return [ConfidenceLevel.Technical, 'formula'];
+        }
+
+        if (/\s{3,}/.test(text)) {
+            // Many contiguous spaces (2 contiguous might me a typo error, but not 3 or more).
+            return [ConfidenceLevel.Technical, 'spaces'];
+        }
+
         const posSpace = text.search(/\s/g);
         if (posSpace < 0) {
             // No white space...
@@ -75,11 +103,11 @@ export class CodeDetect implements IDetectProvider {
                 return [ConfidenceLevel.Technical, 'length'];
             }
 
-            if (this.isCamelCase(text)) {
+            if (isCamelCase(text)) {
                 return [ConfidenceLevel.Technical, 'camelCase'];
             }
 
-            if (this.isPascalCase(text)) {
+            if (isPascalCase(text)) {
                 return [ConfidenceLevel.Technical, 'PascalCase'];
             }
         } else {
@@ -89,14 +117,11 @@ export class CodeDetect implements IDetectProvider {
             }
         }
 
+        const nonAlphaRatio = getNonAlphaRatio(text);
+        if (nonAlphaRatio > this._nonAlphaThreshold) {
+            return [ConfidenceLevel.Technical, `non-alpha=${nonAlphaRatio.toFixed(2)}`];
+        }
+
         return [ConfidenceLevel.Unknown, ''];
-    }
-
-    private isCamelCase(text: string): boolean {
-        return /^[a-z][^\s]+$/.test(text);
-    }
-
-    private isPascalCase(text: string): boolean {
-        return /^([A-Z][^\sA-Z]+)+$/.test(text);
     }
 }

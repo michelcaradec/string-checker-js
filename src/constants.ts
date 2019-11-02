@@ -1,6 +1,6 @@
 export class Constants {
     static readonly ExtensionName = 'string-checker-js';
-    static readonly ExtensionVersion = 'v0.0.2';
+    static readonly ExtensionVersion = 'v0.0.3';
     static readonly ExtensionID = 'string-checker-js';
     static readonly ItemStringPrefix = 'string:';
     static readonly ItemRegexPrefix = 'regex:';
@@ -30,4 +30,10 @@ export class Messages {
     static readonly FilterToken = 'Filter token';
     static readonly EnterString = 'Type a string and press [Enter]';
     static readonly PressEscapeToExit = 'Press [Escape] or [Enter] to close';
+}
+
+export class ConfidenceLevelStr {
+    static readonly Unknown = '?';
+    static readonly Technical = 'Technical';
+    static readonly Message = 'Message';
 }

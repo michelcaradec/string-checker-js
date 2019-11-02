@@ -29,6 +29,7 @@ export class TreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
 
     //#endregion
 
+    // FIXME: call `dispose()` when TreeProvider is disposed.
     private _onDidChangeTreeData: vscode.EventEmitter<vscode.TreeItem | undefined>
         = new vscode.EventEmitter<vscode.TreeItem | undefined>();
 
@@ -66,9 +67,7 @@ export class TreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
     }
 
     refresh(): TreeProvider {
-        if (!this._isRenderingLocked) {
-            this._onDidChangeTreeData.fire();
-        }
+        this._onDidChangeTreeData.fire();
 
         return this;
     }
@@ -172,7 +171,6 @@ export class TreeProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
                         .map(it => TreeItemToken.CreateT2FInstance(it));
 
                     sorted.forEach(it => it.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed);
-                    sorted[0].collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
                     
                     return sorted;
                 } else {

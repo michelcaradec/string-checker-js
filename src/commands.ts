@@ -194,7 +194,7 @@ export class Commands {
         UserDictionaryPersist.add(DictionaryType.ExcludeFolder, () => {
             const fullPath = path.parse((<TreeItemFile>node).uri.fsPath).dir;
             
-            return nameOnly ? ItemRegex.fromValue(`\\${path.sep}${path.basename(fullPath)}$`).rawValue : fullPath;
+            return nameOnly ? ItemRegex.fromValue(`\\${path.sep}${ItemRegex.escape(path.basename(fullPath))}$`).rawValue : fullPath;
         });
     }
 
@@ -203,7 +203,12 @@ export class Commands {
             return;
         }
 
-        UserDictionaryPersist.add(DictionaryType.ExcludeFile, () => nameOnly ? ItemRegex.fromValue(`\\${path.sep}${path.basename((<TreeItemFile>node).uri.fsPath)}$`).rawValue : (<TreeItemFile>node).uri.fsPath);
+        UserDictionaryPersist.add(
+            DictionaryType.ExcludeFile,
+            () =>
+                nameOnly
+                ? ItemRegex.fromValue(`\\${path.sep}${ItemRegex.escape(path.basename((<TreeItemFile>node).uri.fsPath))}$`).rawValue
+                : (<TreeItemFile>node).uri.fsPath);
     }
 
     static addTokenDictionary(type: DictionaryType, node: vscode.TreeItem): void {

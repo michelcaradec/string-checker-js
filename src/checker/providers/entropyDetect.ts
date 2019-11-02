@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { IDetectProvider } from "./detectProvider";
 import { ConfidenceLevel } from "../../enumerations";
 import { Constants } from '../../constants';
+import { stripNonAlphaCharacters } from '../../helpers/utils';
 
 export class EntropyDetect implements IDetectProvider {
     private _threshold: number;
@@ -15,7 +16,7 @@ export class EntropyDetect implements IDetectProvider {
     readonly isStopOnEval: boolean = false;
 
     check(text: string): [ConfidenceLevel, string] {
-        var entropy = this.getShannonEntropy(text.toLowerCase());
+        var entropy = this.getShannonEntropy(stripNonAlphaCharacters(text.toLowerCase())!);
 
         return [entropy > this._threshold ? ConfidenceLevel.Message : ConfidenceLevel.Unknown, `entropy=${entropy.toFixed(2)}`];
     }
