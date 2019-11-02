@@ -11,6 +11,12 @@ Here are a few common issues.
 
 ## [Unreleased]
 
+## [0.0.4] - 2019-11-02
+
+### Changed
+
+- Incorrect entropy values in README.
+
 ## [0.0.3] - 2019-11-01
 
 ### Added
