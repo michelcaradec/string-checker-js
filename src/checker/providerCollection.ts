@@ -1,11 +1,14 @@
 import { IDetectProvider } from "./providers/detectProvider";
 import { ConfidenceLevel } from "../enumerations";
+import { IStatsEmiter } from "../stats/statsEmiter";
 
 export class ProviderCollection {
     private _providers: IDetectProvider[];
+    private _statsEmiter: IStatsEmiter;
 
-    constructor(providers: IDetectProvider[]) {
+    constructor(providers: IDetectProvider[], statsEmiter: IStatsEmiter) {
         this._providers = providers ? providers : [];
+        this._statsEmiter = statsEmiter;
     }
 
     check(text: string): [IDetectProvider | undefined, ConfidenceLevel, string] {
@@ -30,8 +33,24 @@ export class ProviderCollection {
                 break;
             }
         }
+
+        this.emitStats(bestProvider, bestLevel);
         
         return [bestProvider, bestLevel, bestMessage];
+    }
+
+    private emitStats(provider: IDetectProvider | undefined, level: ConfidenceLevel): void {
+        if (provider) {
+            switch (level) {
+                case ConfidenceLevel.Technical:
+                    this._statsEmiter.emit(provider.eventWhenTechnical);
+                    break;
+
+                case ConfidenceLevel.Message:
+                    this._statsEmiter.emit(provider.eventWhenMessage);
+                    break;
+            }
+        }
     }
 
     test(text: string): [IDetectProvider | undefined, ConfidenceLevel, string][] {

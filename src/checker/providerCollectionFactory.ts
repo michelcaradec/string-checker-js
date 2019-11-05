@@ -5,18 +5,20 @@ import { LanguageDetect } from "./providers/languageDetect";
 import { EntropyDetect } from "./providers/entropyDetect";
 import { ProviderCollection } from "./providerCollection";
 import { ClassNameDetect } from "./providers/classNameProvider";
+import { IStatsEmiter } from "../stats/statsEmiter";
 
 export class ProviderCollectionFactory {
-    static createIncludeAll(): ProviderCollection {
-        return  new ProviderCollection([new StringDetect()]);
+    static createIncludeAll(statsEmiter: IStatsEmiter): ProviderCollection {
+        return new ProviderCollection([new StringDetect()], statsEmiter);
     }
 
-    static createInstance(): ProviderCollection {
+    static createInstance(statsEmiter: IStatsEmiter): ProviderCollection {
         return new ProviderCollection([
             new KeywordsDetect(),
             new ClassNameDetect(),
             new CodeDetect(),
             new LanguageDetect(),
-            new EntropyDetect()]);
+            new EntropyDetect()],
+            statsEmiter);
     }
 }

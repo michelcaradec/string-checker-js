@@ -11,6 +11,18 @@ Here are a few common issues.
 
 ## [Unreleased]
 
+## [0.1.0] - 2019-11-05
+
+### Added
+
+- Scan metrics are collected and displayed in a dedicated output console.
+- New configuration setting `string-checker-js.output.show-on-completion` to show output console on scan completion.
+
+### Changed
+
+- Configuration settings grouped under name "String Checker JS".
+- Code refactoring to allow metrics collection.
+
 ## [0.0.4] - 2019-11-02
 
 ### Changed

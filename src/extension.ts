@@ -6,6 +6,7 @@ import { DictionaryType } from './enumerations';
 export function activate(context: vscode.ExtensionContext) {
 	const tree = new TreeProvider();
 	const treeView = vscode.window.createTreeView('string-checker-js-view', { treeDataProvider: tree});
+	const commands = new Commands(tree);
 
 	context.subscriptions.push(
 		vscode.window.registerTreeDataProvider('string-checker-js-view', tree),
@@ -13,36 +14,36 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerTextEditorCommand(
 			'string.checker.js.scanDocument',
 			async (editor) => {
-				await Commands.scanDocument(tree, editor.document);
+				await commands.scanDocument(editor.document);
 				focusFirstItem();
 			}
 		),
 		vscode.commands.registerTextEditorCommand(
 			'string.checker.js.scanDocumentIncludeAll',
 			async (editor) => {
-				await Commands.scanDocument(tree, editor.document, true);
+				await commands.scanDocument(editor.document, true);
 				focusFirstItem();
 			}
 		),
 		vscode.commands.registerCommand(
 			'string.checker.js.scanDocumentWorkspace',
-			async () => Commands.scanDocumentWorkspace(tree)
+			async () => commands.scanDocumentWorkspace()
 		),
 		vscode.commands.registerCommand(
 			'string.checker.js.scanDocumentWorkspaceIncludeAll',
-			async () => Commands.scanDocumentWorkspace(tree, true)
+			async () => commands.scanDocumentWorkspace(true)
 		),
-		vscode.commands.registerCommand('string.checker.js.selectTreeItem', Commands.selectToken),
-		vscode.commands.registerCommand('string.checker.js.excludeParentFolderPath', (node) => Commands.excludeParentFolder(node, false)),
-		vscode.commands.registerCommand('string.checker.js.excludeParentFolderName', (node) => Commands.excludeParentFolder(node, true)),
-		vscode.commands.registerCommand('string.checker.js.excludeFilePath', (node) => Commands.excludeFile(node, false)),
-		vscode.commands.registerCommand('string.checker.js.excludeFileName', (node) => Commands.excludeFile(node, true)),
-		vscode.commands.registerCommand('string.checker.js.includeToken', (node) => Commands.addTokenDictionary(DictionaryType.IncludeToken, node)),
-		vscode.commands.registerCommand('string.checker.js.excludeToken', (node) => Commands.addTokenDictionary(DictionaryType.ExcludeToken, node)),
+		vscode.commands.registerCommand('string.checker.js.selectTreeItem', commands.selectToken),
+		vscode.commands.registerCommand('string.checker.js.excludeParentFolderPath', (node) => commands.excludeParentFolder(node, false)),
+		vscode.commands.registerCommand('string.checker.js.excludeParentFolderName', (node) => commands.excludeParentFolder(node, true)),
+		vscode.commands.registerCommand('string.checker.js.excludeFilePath', (node) => commands.excludeFile(node, false)),
+		vscode.commands.registerCommand('string.checker.js.excludeFileName', (node) => commands.excludeFile(node, true)),
+		vscode.commands.registerCommand('string.checker.js.includeToken', (node) => commands.addTokenDictionary(DictionaryType.IncludeToken, node)),
+		vscode.commands.registerCommand('string.checker.js.excludeToken', (node) => commands.addTokenDictionary(DictionaryType.ExcludeToken, node)),
 		vscode.commands.registerCommand('string.checker.js.switchView', () => tree.switchView().refresh()),
-		vscode.commands.registerCommand('string.checker.js.filterTokens', () => Commands.filterTokens(tree)),
-		vscode.commands.registerCommand('string.checker.js.testString', Commands.testString),
-		vscode.commands.registerCommand('string.checker.js.showVersion', Commands.showVersion)
+		vscode.commands.registerCommand('string.checker.js.filterTokens', () => commands.filterTokens(tree)),
+		vscode.commands.registerCommand('string.checker.js.testString', commands.testString),
+		vscode.commands.registerCommand('string.checker.js.showVersion', commands.showVersion)
 	);
 
 	function focusFirstItem() {

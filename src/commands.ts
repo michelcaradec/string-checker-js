@@ -4,22 +4,28 @@ import { TreeProvider } from './tree/treeProvider';
 import { TextTokenCollection } from './parser/textTokenCollection';
 import { TextParser } from './parser/textParser';
 import { ProviderCollectionFactory } from './checker/providerCollectionFactory';
-import { ConfidenceLevel, DictionaryType, TreeViewType } from './enumerations';
+import { ConfidenceLevel, DictionaryType, TreeViewType, StatsEventType } from './enumerations';
 import { UserDictionaryPersist } from './user-dictionary/userDictionaryPersist';
 import { TreeItemToken } from './tree/tree-items/treeItemToken';
 import { TreeItemFile } from './tree/tree-items/treeItemFile';
 import { Messages, Constants, LanguageId } from './constants';
 import { Files } from './helpers/files';
-import { confidenceLevelToString, removeSentenceQuotes, sleep } from './helpers/utils';
+import { removeSentenceQuotes, sleep } from './helpers/utils';
+import { confidenceLevelToString } from './helpers/converters';
 import { ItemRegex } from './user-dictionary/dictionary-items/itemRegex';
+import { StatsProvider } from './stats/statsProvider';
 
 export class Commands {
+    private _statsProvider = new StatsProvider();
+    private _tree: TreeProvider;
+
+    constructor(tree: TreeProvider) {
+        this._tree = tree;
+    }
+
     //#region scanDocument
 
-    static async scanDocumentWorkspace(
-        tree: TreeProvider,
-        includeAll?: boolean | false
-    ): Promise<void> {
+    async scanDocumentWorkspace(includeAll?: boolean | false): Promise<void> {
         if (!vscode.workspace.workspaceFolders) {
             vscode.window.showInformationMessage(Messages.NoFolderWorkspaceOpened);
             return;
@@ -31,18 +37,17 @@ export class Commands {
                 title: Messages.WorkspaceScanInProgress
             },
             async (progress, _token) => {
-                this.scanStarted(tree);
+                this.scanStarted();
 
                 let files: string[] = [];
                 for (const workspaceFolder of vscode.workspace.workspaceFolders!) {
-                    files = await Files.getFiles(workspaceFolder.uri.fsPath);
+                    files = await new Files(this._statsProvider).getFiles(workspaceFolder.uri.fsPath);
                 }
 
                 if (files.length > 0) {
                     for (const filename of files) {
                         const doc = await vscode.workspace.openTextDocument(filename);
                         this.scanDocumentRaw(
-                            tree,
                             doc,
                             includeAll,
                             true,
@@ -50,7 +55,7 @@ export class Commands {
                         );
                     }
 
-                    await this.scanCompleted(tree, progress, includeAll);
+                    await this.scanCompleted(progress, includeAll);
                 } else {
                     vscode.window.showInformationMessage(Messages.NoFileFound);
                 }
@@ -58,8 +63,7 @@ export class Commands {
         );
     }
 
-    static async scanDocument(
-        tree: TreeProvider,
+    async scanDocument(
         doc: vscode.TextDocument,
         includeAll?: boolean | false): Promise<void> {
         // Document language must be checked at execution-time to allow command trigger from tree view.
@@ -76,9 +80,11 @@ export class Commands {
                     title: Messages.DocumentScanInProgress
                 },
                 async (progress, _token) => {
-                    this.scanStarted(tree);
-                    this.scanDocumentRaw(tree, doc, includeAll, false, () => progress.report({}));
-                    await this.scanCompleted(tree, progress, includeAll);
+                    this.scanStarted();
+                    this._statsProvider.emit(StatsEventType.FileScanned);
+                    this._statsProvider.emit(StatsEventType.FileSelected);
+                    this.scanDocumentRaw(doc, includeAll, false, () => progress.report({}));
+                    await this.scanCompleted(progress, includeAll);
                 }
             );
         } else {
@@ -86,8 +92,7 @@ export class Commands {
         }
     }
 
-    private static scanDocumentRaw(
-        tree: TreeProvider,
+    private scanDocumentRaw(
         doc: vscode.TextDocument,
         includeAll?: boolean | false,
         append?: boolean | false,
@@ -97,7 +102,7 @@ export class Commands {
 
         const tokens = this.scanDocumentImpl(text, includeAll, onProgress);
 
-        tree.feed([[doc.uri, tokens]], append);
+        this._tree.feed([[doc.uri, tokens]], append);
         if (onProgress) { onProgress(); }
     }
 
@@ -105,34 +110,38 @@ export class Commands {
      * Scan some text for strings
      * @param {*} text Text to scan
      */
-    private static scanDocumentImpl(
+    private scanDocumentImpl(
         text: string,
         includeAll?: boolean | false,
         onProgress?: () => void | undefined): TextTokenCollection {
         let items: TextTokenCollection = new TextTokenCollection();
+
+        this._statsProvider.emit(StatsEventType.DocumentScanned);
 
         if (text === undefined || text === '') {
             return items;
         }
 
         const parser = new TextParser(
+            this._statsProvider,
             text,
             vscode.workspace.getConfiguration(Constants.ExtensionID).get<boolean>('parser.jquery-exclude')!,
             vscode.workspace.getConfiguration(Constants.ExtensionID).get<string>('parser.jquery-identifier')
             );
-        const providers = includeAll ? ProviderCollectionFactory.createIncludeAll() : ProviderCollectionFactory.createInstance();
+        const providers
+            = includeAll
+            ? ProviderCollectionFactory.createIncludeAll(this._statsProvider)
+            : ProviderCollectionFactory.createInstance(this._statsProvider);
 
         while (true) {
-            let token = parser.getNextToken();
+            const token = parser.getNextToken();
             if (token === null) {
                 break;
             }
 
-            if (token.value !== '') {
-                [token.provider, token.level, token.info] = providers.check(token.value);
-                if (token.level === ConfidenceLevel.Message) {
-                    items.push(token);
-                }
+            [token.provider, token.level, token.info] = providers.check(token.value);
+            if (token.level === ConfidenceLevel.Message) {
+                items.push(token);
             }
 
             if (onProgress) { onProgress(); }
@@ -141,35 +150,37 @@ export class Commands {
         return items;
     }
 
-    private static scanStarted(tree: TreeProvider): void {
-        tree.clear()
+    private scanStarted(): void {
+        this._statsProvider.reset();
+        this._tree.clear()
             .refresh()
             .lockRendering(true);
     }
 
-    private static async scanCompleted(
-        tree: TreeProvider,
+    private async scanCompleted(
         progress: vscode.Progress<{ message?: string; increment?: number }>,
         includeAll: boolean = false): Promise<void> {
         // When all strings are returned, Token to Files view is prefered.
         if (includeAll) {
-            tree.switchView(TreeViewType.TokenToFiles);
+            this._tree.switchView(TreeViewType.TokenToFiles);
         }
-        tree.lockRendering(false)
+        this._tree.lockRendering(false)
             .resetFilter()
             .refresh();
-        if (!tree.getFirstItem()) {
+        if (!this._tree.getFirstItem()) {
             progress.report({ message: Messages.ScanNoTokenFound });
         } else {
             progress.report({ message: Messages.ScanCompleted });
         }
+
+        this._statsProvider.dumpPretty();
 
         await sleep(2000);
     }
 
     //#endregion
 
-    static selectToken(uri: vscode.Uri, positions: [number, number][]): void {
+    selectToken(uri: vscode.Uri, positions: [number, number][]): void {
         vscode.workspace.openTextDocument(uri).then(doc => {
             vscode.window.showTextDocument(doc).then(editor => {
                 // Prepare token(s) selection
@@ -186,7 +197,7 @@ export class Commands {
         });
     }
 
-    static excludeParentFolder(node: vscode.TreeItem, nameOnly: boolean): void {
+    excludeParentFolder(node: vscode.TreeItem, nameOnly: boolean): void {
         if (!(node instanceof TreeItemFile)) {
             return;
         }
@@ -198,7 +209,7 @@ export class Commands {
         });
     }
 
-    static excludeFile(node: vscode.TreeItem, nameOnly: boolean): void {
+    excludeFile(node: vscode.TreeItem, nameOnly: boolean): void {
         if (!(node instanceof TreeItemFile)) {
             return;
         }
@@ -211,7 +222,7 @@ export class Commands {
                 : (<TreeItemFile>node).uri.fsPath);
     }
 
-    static addTokenDictionary(type: DictionaryType, node: vscode.TreeItem): void {
+    addTokenDictionary(type: DictionaryType, node: vscode.TreeItem): void {
         if (!(node instanceof TreeItemToken) || node.label === undefined || node.label! === '') {
             return;
         }
@@ -219,7 +230,7 @@ export class Commands {
         UserDictionaryPersist.add(type, () => node.label!);
     }
 
-    static async filterTokens(tree: TreeProvider): Promise<void> {
+    async filterTokens(tree: TreeProvider): Promise<void> {
         const text = await vscode.window.showInputBox({ value: tree.filter, prompt: Messages.FilterToken, placeHolder: Messages.EnterString });
         if (text === undefined) {
             return;
@@ -233,7 +244,7 @@ export class Commands {
         tree.setFilter(text).switchView(TreeViewType.TokenToFiles).refresh();
     }
 
-    static async testString(): Promise<void> {
+    async testString(): Promise<void> {
         let input: string | undefined = undefined;
         if (vscode.window.activeTextEditor) {
             const doc = vscode.window.activeTextEditor!.document;
@@ -247,7 +258,7 @@ export class Commands {
             return;
         }
 
-        const providers = ProviderCollectionFactory.createInstance();
+        const providers = ProviderCollectionFactory.createInstance(this._statsProvider);
         const [winner,,] = providers.check(text!);
         // QuickPick is not the best way to display items, but it's the most convenient one.
         vscode.window.showQuickPick(
@@ -258,7 +269,7 @@ export class Commands {
         );
     }
 
-    static showVersion(): void {
+    showVersion(): void {
         vscode.window.showInformationMessage(`${Constants.ExtensionName} ${Constants.ExtensionVersion}`);
     }
 }

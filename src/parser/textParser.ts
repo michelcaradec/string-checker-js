@@ -2,8 +2,11 @@
 import * as ts from "typescript";
 import { TextToken } from "./textToken";
 import { Constants } from "../constants";
+import { IStatsEmiter } from "../stats/statsEmiter";
+import { StatsEventType } from "../enumerations";
 
 export class TextParser {
+    private _statsEmiter: IStatsEmiter;
     private _generator: IterableIterator<ts.Node>;
     private _ignoreJQuery: boolean;
     private _jQueryIdentifier: string;
@@ -18,10 +21,12 @@ export class TextParser {
         ts.SyntaxKind.TemplateMiddle,
         ts.SyntaxKind.TemplateTail]);
 
-    constructor(text: string,
+    constructor(statsEmiter: IStatsEmiter,
+                text: string,
                 ignoreJQuery: boolean = true,
                 jQueryIdentifier: string = Constants.JQueryIdentifier,
                 ignoreThrowStatement: boolean = true) {
+        this._statsEmiter = statsEmiter;
         this._generator = this.getNodeKind(ts.createSourceFile('script.ts', text, ts.ScriptTarget.ES5, true));
         this._ignoreJQuery = ignoreJQuery;
         this._jQueryIdentifier = jQueryIdentifier;
@@ -35,17 +40,20 @@ export class TextParser {
 
         if (this._ignoreThrowStatement
             && node.kind === ts.SyntaxKind.ThrowStatement) {
+            this._statsEmiter.emit(StatsEventType.ParserStatementThrowIgnored);
             return;
         }
 
         const children = node.getChildren();
         if (this._ignoreJQuery
             && children.some(n => n.kind === ts.SyntaxKind.Identifier && n.getText() === this._jQueryIdentifier)) {
+                this._statsEmiter.emit(StatsEventType.ParserStatementJQueryIgnored);
             return;
         }
 
         if (this._ignoreConsole
             && children.some(n => n.kind === ts.SyntaxKind.PropertyAccessExpression && n.getText().startsWith(this._consoleIdentifier))) {
+            this._statsEmiter.emit(StatsEventType.ParserStatementConsoleIgnored);
             return;
         }
 
@@ -56,19 +64,29 @@ export class TextParser {
         }
     }
 
+    /**
+     * Get next non-empty string.
+     * @returns `TextToken` object.
+     */
     getNextToken(): TextToken | null {
-        const node = this._generator.next();
-        if (node.done) {
-            return null;
+        while (true) {
+            const node = this._generator.next();
+            if (node.done) {
+                return null;
+            }
+    
+            let value = node.value.getText();
+            value = value
+                // Remove quotes.
+                .slice(1, value.length - 1)
+                // Remove beginning and ending spaces.
+                .trim();
+
+            if (value !== '') {
+                this._statsEmiter.emit(StatsEventType.ParserToken);
+    
+                return new TextToken(value, node.value.pos, node.value.end);
+            }    
         }
-
-        let value = node.value.getText();
-        value = value
-            // Remove quotes.
-            .slice(1, value.length - 1)
-            // Remove beginning and ending spaces.
-            .trim();
-
-        return new TextToken(value, node.value.pos, node.value.end);
     }
 }

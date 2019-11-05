@@ -1,6 +1,3 @@
-import { ConfidenceLevel } from "../enumerations";
-import { ConfidenceLevelStr } from "../constants";
-
 export const sleep = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export function distinct<T>(array: Array<T>, compareFn?: (a: T, b: T) => number): Array<T> {
@@ -15,22 +12,6 @@ export function distinct<T>(array: Array<T>, compareFn?: (a: T, b: T) => number)
     }
 
     return dist;
-}
-
-export function confidenceLevelToString(level: ConfidenceLevel): string {
-    switch (level) {
-        case ConfidenceLevel.Unknown:
-            return ConfidenceLevelStr.Unknown;
-
-        case ConfidenceLevel.Technical:
-            return ConfidenceLevelStr.Technical;
-
-        case ConfidenceLevel.Message:
-            return ConfidenceLevelStr.Message;
-
-        default:
-            throw new Error(`Not supported type ${level}`);
-    }
 }
 
 export function removeSentenceQuotes(text: string | undefined): string | undefined {
@@ -81,4 +62,13 @@ export function stripNonAlphaCharacters(text: string | undefined): string | unde
     }
 
     return normalizeString(text)!.replace(/[^a-z\d\s]/ig, '');
+}
+
+export function getTimeSpanHumanReadable(from: Date, to: Date): string {
+    const elapsed = new Date(to.valueOf() - from.valueOf());
+    if (elapsed.valueOf() < 1000) {
+        return `${elapsed.getMilliseconds()} ms.`;
+    } else {
+        return `${elapsed.getSeconds() + elapsed.getMinutes() * 60} s.`;
+    }
 }

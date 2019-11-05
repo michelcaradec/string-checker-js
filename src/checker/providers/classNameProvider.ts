@@ -1,9 +1,13 @@
 import { IDetectProvider } from "./detectProvider";
-import { ConfidenceLevel } from "../../enumerations";
+import { ConfidenceLevel, StatsEventType } from "../../enumerations";
+import { ProviderName } from "../../constants";
 
 export class ClassNameDetect implements IDetectProvider {
-    readonly name: string = 'Class provider';
+    //#region IDetectProvider
 
+    readonly name: string = ProviderName.ClassName;
+    readonly eventWhenTechnical: StatsEventType = StatsEventType.DetectedAsTechnicalByClassName;
+    readonly eventWhenMessage: StatsEventType = StatsEventType.DetectedAsMessageByClassName;
     readonly isStopOnEval: boolean = true;
     
     check(text: string): [ConfidenceLevel, string] {
@@ -55,4 +59,6 @@ export class ClassNameDetect implements IDetectProvider {
 
         return [ConfidenceLevel.Unknown, ''];
     }
+
+    //#endregion
 }

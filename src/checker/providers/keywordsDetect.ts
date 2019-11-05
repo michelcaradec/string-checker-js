@@ -1,7 +1,8 @@
 import { IDetectProvider } from "./detectProvider";
-import { ConfidenceLevel, DictionaryType } from "../../enumerations";
+import { ConfidenceLevel, DictionaryType, StatsEventType } from "../../enumerations";
 import { UserDictionaryFactory } from '../../user-dictionary/userDictionaryFactory';
 import { UserDictionary } from "../../user-dictionary/userDictionary";
+import { ProviderName } from "../../constants";
 
 export class KeywordsDetect implements IDetectProvider {
     private _technicalList: UserDictionary;
@@ -12,8 +13,11 @@ export class KeywordsDetect implements IDetectProvider {
         this._messageList = UserDictionaryFactory.createInstance(DictionaryType.IncludeToken) || new UserDictionary();
     }
 
-    readonly name: string = 'Keywords provider';
+    //#region IDetectProvider
 
+    readonly name: string = ProviderName.Keywords;
+    readonly eventWhenTechnical: StatsEventType = StatsEventType.DetectedAsTechnicalByKeyword;
+    readonly eventWhenMessage: StatsEventType = StatsEventType.DetectedAsMessageByKeyword;
     readonly isStopOnEval: boolean = true;
 
     check(text: string): [ConfidenceLevel, string] {
@@ -29,4 +33,6 @@ export class KeywordsDetect implements IDetectProvider {
 
         return [ConfidenceLevel.Unknown, ''];
     }
+
+    //#endregion
 }

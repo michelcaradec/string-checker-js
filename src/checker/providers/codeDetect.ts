@@ -1,22 +1,26 @@
 import * as vscode from 'vscode';
 import { IDetectProvider } from "./detectProvider";
-import { ConfidenceLevel } from "../../enumerations";
-import { Constants } from '../../constants';
+import { ConfidenceLevel, StatsEventType } from "../../enumerations";
+import { Constants, ProviderName } from '../../constants';
 import { isCamelCase, isPascalCase, getNonAlphaRatio } from '../../helpers/utils';
 
 export class CodeDetect implements IDetectProvider {
     private _minWordLength: number;
     private _maxWordLength: number;
     private _nonAlphaThreshold: number;
-    readonly name: string = 'Code provider';
-
-    readonly isStopOnEval: boolean = true;
 
     constructor() {
         this._minWordLength = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('variable.word-min-length')!;
         this._maxWordLength = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('variable.word-max-length')!;
         this._nonAlphaThreshold = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('variable.non-alpha-ratio-threshold')!;
     }
+
+    //#region IDetectProvider
+
+    readonly name: string = ProviderName.Code;
+    readonly eventWhenTechnical: StatsEventType = StatsEventType.DetectedAsTechnicalByCode;
+    readonly eventWhenMessage: StatsEventType = StatsEventType.DetectedAsMessageByCode;
+    readonly isStopOnEval: boolean = true;
 
     private static readonly _startChars = [
         ['..', '..*'],      // Path
@@ -124,4 +128,6 @@ export class CodeDetect implements IDetectProvider {
 
         return [ConfidenceLevel.Unknown, ''];
     }
+
+    //#endregion
 }

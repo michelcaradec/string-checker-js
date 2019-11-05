@@ -1,14 +1,17 @@
 import * as vscode from 'vscode';
 import { IDetectProvider } from "./detectProvider";
-import { ConfidenceLevel } from "../../enumerations";
-import { Constants } from '../../constants';
+import { ConfidenceLevel, StatsEventType } from "../../enumerations";
+import { Constants, ProviderName } from '../../constants';
 var franc = require('franc');
 
 const UndefinedLanguage: string = 'und';
 
 export class LanguageDetect implements IDetectProvider {
-    readonly name: string = 'Natural language provider';
-    
+    //#region IDetectProvider
+
+    readonly name: string = ProviderName.Language;
+    readonly eventWhenTechnical: StatsEventType = StatsEventType.DetectedAsTechnicalByLanguage;
+    readonly eventWhenMessage: StatsEventType = StatsEventType.DetectedAsMessageByLanguage;
     readonly isStopOnEval: boolean = false;
 
     check(text: string): [ConfidenceLevel, string] {
@@ -18,4 +21,6 @@ export class LanguageDetect implements IDetectProvider {
 
         return language === UndefinedLanguage ? [ConfidenceLevel.Unknown, ''] : [ConfidenceLevel.Message, `lang=${language}`];
     }
+
+    //#endregion
 }

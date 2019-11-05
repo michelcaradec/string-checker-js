@@ -4,30 +4,31 @@ import * as path from 'path';
 import { UserDictionary } from '../user-dictionary/userDictionary';
 import { Constants, Messages } from '../constants';
 import { UserDictionaryFactory } from '../user-dictionary/userDictionaryFactory';
-import { DictionaryType } from '../enumerations';
+import { DictionaryType, StatsEventType } from '../enumerations';
+import { IStatsEmiter } from "../stats/statsEmiter";
 
 export class Files {
-    private static _excludeFolders: UserDictionary;
-    private static _excludeFiles: UserDictionary;
-    private static _extensionsInclude: string[];
-    private static _extensionsExclude: string[];
-    private static _maxFiles: number;
+    private _statsEmiter: IStatsEmiter;
+    private _excludeFolders: UserDictionary
+        = UserDictionaryFactory.mergeConfiguration(
+        DictionaryType.ExcludeFolder,
+        UserDictionaryFactory.createInstance(DictionaryType.ExcludeFolder, false)!);
+    private _excludeFiles: UserDictionary
+        = UserDictionaryFactory.mergeConfiguration(
+        DictionaryType.ExcludeFile,
+        UserDictionaryFactory.createInstance(DictionaryType.ExcludeFile, false)!);
+    private _extensionsInclude: string[]
+        = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension') || [];
+    private _extensionsExclude: string[]
+        = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension-exclude') || [];
+    private _maxFiles: number
+        = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('workspace.file-max')!;
 
-    private static syncConfiguration(): void {
-        this._excludeFolders = UserDictionaryFactory.mergeConfiguration(
-            DictionaryType.ExcludeFolder,
-            UserDictionaryFactory.createInstance(DictionaryType.ExcludeFolder, false)!);
-        this._excludeFiles = UserDictionaryFactory.mergeConfiguration(
-            DictionaryType.ExcludeFile,
-            UserDictionaryFactory.createInstance(DictionaryType.ExcludeFile, false)!);
-        this._extensionsInclude = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension') || [];
-        this._extensionsExclude = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension-exclude') || [];
-        this._maxFiles = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('workspace.file-max')!;
+    constructor(statsEmiter: IStatsEmiter) {
+        this._statsEmiter = statsEmiter;
     }
 
-    static async getFiles(folder: string, notify?: boolean | true): Promise<string[]> {
-        this.syncConfiguration();
-
+    async getFiles(folder: string, notify?: boolean | true): Promise<string[]> {
         const files = await this.getFilesImpl(folder);
         if (files.length === this._maxFiles && notify) {
             vscode.window.showWarningMessage(Messages.MaxFileLimitReached);
@@ -36,7 +37,7 @@ export class Files {
         return files;
     }
 
-    private static async getFilesImpl(folder: string, files: string[] = []): Promise<string[]> {
+    private async getFilesImpl(folder: string, files: string[] = []): Promise<string[]> {
         if (files.length >= this._maxFiles) {
             return files;
         }
@@ -67,27 +68,36 @@ export class Files {
             });
 
             if (stat.isDirectory()) {
+                this._statsEmiter.emit(StatsEventType.FolderScanned);
+
                 if (this._excludeFolders.contains(fullPath)) {
+                    this._statsEmiter.emit(StatsEventType.FolderExcluded);
                     continue;
                 }
                 files = await this.getFilesImpl(fullPath, files);
                 continue;
             } else {
+                this._statsEmiter.emit(StatsEventType.FileScanned);
+
                 if (this._excludeFiles.contains(fullPath)) {
+                    this._statsEmiter.emit(StatsEventType.FileExcluded);
                     continue;
                 }
             }
 
             // `path.extname()`is not used to support multiple dot extensions such as `*.d.ts`.
             if (this._extensionsExclude.some(ext => filename.endsWith(ext))) {
+                this._statsEmiter.emit(StatsEventType.FileExcluded);
                 continue;
             }
 
             if (this._extensionsInclude.length > 0
                 && !this._extensionsInclude.some(ext => filename.endsWith(ext))) {
+                this._statsEmiter.emit(StatsEventType.FileExcluded);
                 continue;
             }
 
+            this._statsEmiter.emit(StatsEventType.FileSelected);
             files.push(fullPath);
         }
 
