@@ -11,6 +11,10 @@ Here are a few common issues.
 
 ## [Unreleased]
 
+### Added
+
+- Keywords in package.json to improve extension search in market place.
+
 ## [0.1.0] - 2019-11-05
 
 ### Added

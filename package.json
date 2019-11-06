@@ -17,6 +17,13 @@
 		"Programming Languages",
 		"Other"
 	],
+	"keywords": [
+		"typescript",
+		"javascript",
+		"translation",
+		"localization",
+		"natural language"
+	],
 	"activationEvents": [
 		"onCommand:string.checker.js.scanDocument",
 		"onCommand:string.checker.js.scanDocumentIncludeAll",
