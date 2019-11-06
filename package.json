@@ -308,11 +308,11 @@
 		"glob": "^7.1.4",
 		"mocha": "^6.1.4",
 		"tslint": "^5.12.1",
-		"typescript": "^3.6.4"
+		"typescript": "^3.7.2"
 	},
 	"dependencies": {
 		"escape-string-regexp": "^2.0.0",
-		"franc": "^4.1.0",
-		"typescript": "^3.6.4"
+		"typescript": "^3.7.2",
+		"franc": "^4.1.0"
 	}
 }

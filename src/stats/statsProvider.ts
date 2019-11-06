@@ -23,8 +23,8 @@ export class StatsProvider implements IStatsEmiter {
         //#region File System
 
         this._channel.appendLine(Stats.FileSystem_Title);
-        this._channel.appendLine(`${Stats.FileSystem_FoldersPicked}: ${(this._events.get(StatsEventType.FolderScanned) || 0) - (this._events.get(StatsEventType.FolderExcluded) || 0)} / ${this._events.get(StatsEventType.FolderScanned) || 0}.`);
-        this._channel.appendLine(`${Stats.FileSystem_FilesPicked}: ${this._events.get(StatsEventType.FileSelected) || 0} / ${this._events.get(StatsEventType.FileScanned) || 0}.`);
+        this._channel.appendLine(`${Stats.FileSystem_FoldersPicked}: ${(this._events.get(StatsEventType.FolderScanned) ?? 0) - (this._events.get(StatsEventType.FolderExcluded) ?? 0)} / ${this._events.get(StatsEventType.FolderScanned) ?? 0}.`);
+        this._channel.appendLine(`${Stats.FileSystem_FilesPicked}: ${this._events.get(StatsEventType.FileSelected) ?? 0} / ${this._events.get(StatsEventType.FileScanned) ?? 0}.`);
         this._channel.appendLine('');
 
         //#endregion
@@ -32,7 +32,7 @@ export class StatsProvider implements IStatsEmiter {
 
         this._channel.appendLine(Stats.Parser_Title);
         for (const event of [StatsEventType.ParserStatementThrowIgnored, StatsEventType.ParserStatementJQueryIgnored, StatsEventType.ParserStatementConsoleIgnored]) {
-            this._channel.appendLine(`${statsEventTypeToString(event)}: ${this._events.get(event) || 0}`);
+            this._channel.appendLine(`${statsEventTypeToString(event)}: ${this._events.get(event) ?? 0}`);
         }
         this._channel.appendLine('');
 
@@ -55,22 +55,22 @@ export class StatsProvider implements IStatsEmiter {
                             [ProviderName.Keywords, StatsEventType.DetectedAsTechnicalByKeyword, StatsEventType.DetectedAsMessageByKeyword],
                             [ProviderName.Language, StatsEventType.DetectedAsTechnicalByLanguage, StatsEventType.DetectedAsMessageByLanguage],
                             [ProviderName.String, StatsEventType.DetectedAsTechnicalByString, StatsEventType.DetectedAsMessageByString]]) {
-            const countTechnical = (this._events.get(<StatsEventType>eventTechnical) || 0).toString().padStart(1 + padTechnical);
-            const countMessage = (this._events.get(<StatsEventType>eventMessage) || 0).toString().padStart(1 + padMessage);
+            const countTechnical = (this._events.get(<StatsEventType>eventTechnical) ?? 0).toString().padStart(1 + padTechnical);
+            const countMessage = (this._events.get(<StatsEventType>eventMessage) ?? 0).toString().padStart(1 + padMessage);
             this._channel.appendLine(`${(<string>name).padEnd(padProvider)}|${countTechnical}|${countMessage}`);
         }
 
         //#region Message strings ratio
 
-        const totalTokens = this._events.get(StatsEventType.ParserToken) || 0;
+        const totalTokens = this._events.get(StatsEventType.ParserToken) ?? 0;
         if (totalTokens > 0) {
             const totalMessages
-                = (this._events.get(StatsEventType.DetectedAsMessageByClassName) || 0)
-                + (this._events.get(StatsEventType.DetectedAsMessageByCode) || 0)
-                + (this._events.get(StatsEventType.DetectedAsMessageByEntropy) || 0)
-                + (this._events.get(StatsEventType.DetectedAsMessageByKeyword) || 0)
-                + (this._events.get(StatsEventType.DetectedAsMessageByLanguage) || 0)
-                + (this._events.get(StatsEventType.DetectedAsMessageByString) || 0);
+                = (this._events.get(StatsEventType.DetectedAsMessageByClassName) ?? 0)
+                + (this._events.get(StatsEventType.DetectedAsMessageByCode) ?? 0)
+                + (this._events.get(StatsEventType.DetectedAsMessageByEntropy) ?? 0)
+                + (this._events.get(StatsEventType.DetectedAsMessageByKeyword) ?? 0)
+                + (this._events.get(StatsEventType.DetectedAsMessageByLanguage) ?? 0)
+                + (this._events.get(StatsEventType.DetectedAsMessageByString) ?? 0);
             this._channel.appendLine(line);
             this._channel.appendLine(`${''.padEnd(padProvider)}|${''.padEnd(1 + padTechnical)}|${(totalMessages / totalTokens * 100).toFixed(2).padStart(padMessage)}%`);
         }
@@ -107,7 +107,7 @@ export class StatsProvider implements IStatsEmiter {
             return;
         }
 
-        this._events.set(event, (this._events.get(event) || 0) + value!);
+        this._events.set(event, (this._events.get(event) ?? 0) + value!);
     }
 
     //#endregion

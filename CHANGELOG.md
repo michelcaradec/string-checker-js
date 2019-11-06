@@ -15,6 +15,10 @@ Here are a few common issues.
 
 - Keywords in package.json to improve extension search in market place.
 
+### Changed
+
+- Update to [TypeScript 3.7](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/).
+
 ## [0.1.0] - 2019-11-05
 
 ### Added

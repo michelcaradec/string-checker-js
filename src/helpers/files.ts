@@ -18,9 +18,9 @@ export class Files {
         DictionaryType.ExcludeFile,
         UserDictionaryFactory.createInstance(DictionaryType.ExcludeFile, false)!);
     private _extensionsInclude: string[]
-        = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension') || [];
+        = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension') ?? [];
     private _extensionsExclude: string[]
-        = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension-exclude') || [];
+        = vscode.workspace.getConfiguration(Constants.ExtensionID).get<string[]>('file-extension-exclude') ?? [];
     private _maxFiles: number
         = vscode.workspace.getConfiguration(Constants.ExtensionID).get<number>('workspace.file-max')!;
 

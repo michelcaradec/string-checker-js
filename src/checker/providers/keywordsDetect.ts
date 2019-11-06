@@ -9,8 +9,8 @@ export class KeywordsDetect implements IDetectProvider {
     private _messageList: UserDictionary;
 
     constructor() {
-        this._technicalList = UserDictionaryFactory.createInstance(DictionaryType.ExcludeToken) || new UserDictionary();
-        this._messageList = UserDictionaryFactory.createInstance(DictionaryType.IncludeToken) || new UserDictionary();
+        this._technicalList = UserDictionaryFactory.createInstance(DictionaryType.ExcludeToken) ?? new UserDictionary();
+        this._messageList = UserDictionaryFactory.createInstance(DictionaryType.IncludeToken) ?? new UserDictionary();
     }
 
     //#region IDetectProvider

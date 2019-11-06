@@ -43,5 +43,5 @@ const _mapEventTypeToString
         [StatsEventType.DetectedAsMessageByString, StatsEventTypeStr.DetectedAsMessageByString]]);
 
 export function statsEventTypeToString(event: StatsEventType): string {
-    return _mapEventTypeToString.get(event) || '';
+    return _mapEventTypeToString.get(event) ?? '';
 }

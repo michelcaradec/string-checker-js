@@ -15,11 +15,11 @@ export function distinct<T>(array: Array<T>, compareFn?: (a: T, b: T) => number)
 }
 
 export function removeSentenceQuotes(text: string | undefined): string | undefined {
-    if (!text || text.length < 2) {
+    if ((text?.length ?? 0) < 2) {
         return text;
     }
 
-    text = text.trim();
+    text = text!.trim();
 
     const first = text.charAt(0);
     const last = text.charAt(text.length - 1);
@@ -41,23 +41,23 @@ export function isPascalCase(text: string): boolean {
 }
 
 export function getNonAlphaRatio(text: string | undefined): number {
-    if (!text || text.length <= 0) {
+    if ((text?.length ?? 0) <= 0) {
         return 0;
     }
 
-    return 1 - stripNonAlphaCharacters(normalizeString(text))!.length / text.length;
+    return 1 - stripNonAlphaCharacters(normalizeString(text))!.length / text!.length;
 }
 
 export function normalizeString(text: string | undefined): string | undefined {
-    if (!text || text.length <= 0) {
+    if ((text?.length ?? 0) <= 0) {
         return text;
     }
 
-    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return text!.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 export function stripNonAlphaCharacters(text: string | undefined): string | undefined {
-    if (!text || text.length <= 0) {
+    if ((text?.length ?? 0) <= 0) {
         return text;
     }
 
