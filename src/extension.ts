@@ -42,8 +42,8 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.commands.registerCommand('string.checker.js.excludeToken', (node) => commands.addTokenDictionary(DictionaryType.ExcludeToken, node)),
 		vscode.commands.registerCommand('string.checker.js.switchView', () => tree.switchView().refresh()),
 		vscode.commands.registerCommand('string.checker.js.filterTokens', () => commands.filterTokens(tree)),
-		vscode.commands.registerCommand('string.checker.js.testString', commands.testString),
-		vscode.commands.registerCommand('string.checker.js.showVersion', commands.showVersion)
+		vscode.commands.registerCommand('string.checker.js.testString', () => commands.testString()),
+		vscode.commands.registerCommand('string.checker.js.showVersion', () => commands.showVersion())
 	);
 
 	function focusFirstItem() {
