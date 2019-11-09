@@ -21,6 +21,7 @@ Here are a few common issues.
 - There was an error when calling commands `testString` and `showVersion`.
 - Code provider:
   - `px` HTML expression detection.
+  - Improvement in camel case variable detection.
 
 ## [0.1.0] - 2019-11-05
 

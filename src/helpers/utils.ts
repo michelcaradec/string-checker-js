@@ -33,7 +33,7 @@ export function removeSentenceQuotes(text: string | undefined): string | undefin
 }
 
 export function isCamelCase(text: string): boolean {
-    return /^[a-z][^\s]+$/.test(text);
+    return /^([a-z][^A-Z\s]+)([A-Z][^A-Z\s]*)+$/.test(text);
 }
 
 export function isPascalCase(text: string): boolean {
