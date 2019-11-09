@@ -84,6 +84,10 @@ export class CodeDetect implements IDetectProvider {
             return [ConfidenceLevel.Technical, 'img'];
         }
 
+        if (text.search(/\d+px/) >= 0) {
+            return [ConfidenceLevel.Technical, 'px'];
+        }
+
         if (/ ?(>|<|\+|\*|=|\/) ?/.test(text)) {
             // Text with mathematical symbols.
             return [ConfidenceLevel.Technical, 'formula'];

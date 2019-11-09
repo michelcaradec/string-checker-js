@@ -19,6 +19,8 @@ Here are a few common issues.
 
 - Update to [TypeScript 3.7](https://devblogs.microsoft.com/typescript/announcing-typescript-3-7/).
 - There was an error when calling commands `testString` and `showVersion`.
+- Code provider:
+  - `px` HTML expression detection.
 
 ## [0.1.0] - 2019-11-05
 
