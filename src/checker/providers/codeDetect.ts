@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { IDetectProvider } from "./detectProvider";
 import { ConfidenceLevel, StatsEventType } from "../../enumerations";
 import { Constants, ProviderName } from '../../constants';
-import { isCamelCase, isPascalCase, getNonAlphaRatio } from '../../helpers/utils';
+import { isCamelCase, isPascalCase, getNonAlphaRatio, isSnakeCase } from '../../helpers/utils';
 
 export class CodeDetect implements IDetectProvider {
     private _minWordLength: number;
@@ -117,6 +117,10 @@ export class CodeDetect implements IDetectProvider {
 
             if (isPascalCase(text)) {
                 return [ConfidenceLevel.Technical, 'PascalCase'];
+            }
+
+            if (isSnakeCase(text)) {
+                return [ConfidenceLevel.Technical, 'snake_case'];
             }
         } else {
             if (text.split(' ').some(w => w.length > this._maxWordLength)) {

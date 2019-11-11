@@ -40,6 +40,10 @@ export function isPascalCase(text: string): boolean {
     return /^([A-Z][^\sA-Z]+)+$/.test(text);
 }
 
+export function isSnakeCase(text: string): boolean {
+    return /^[a-z]([a-z\d]|_)+$/i.test(text);
+}
+
 export function getNonAlphaRatio(text: string | undefined): number {
     if ((text?.length ?? 0) <= 0) {
         return 0;

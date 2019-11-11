@@ -11,6 +11,13 @@ Here are a few common issues.
 
 ## [Unreleased]
 
+## [0.1.2] - 2019-11-11
+
+### Added
+
+- Code provider:
+  - Snake case variable detection.
+
 ## [0.1.1] - 2019-11-09
 
 ### Added
