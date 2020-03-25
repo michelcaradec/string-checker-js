@@ -11,6 +11,12 @@ Here are a few common issues.
 
 ## [Unreleased]
 
+## [0.1.3] - 2020-03-25
+
+### Changed
+
+- Upgrade of [minimist](https://www.npmjs.com/package/minimist) package version 1.2.5 in remediation of [vulnerability alert](https://snyk.io/vuln/SNYK-JS-MINIMIST-559764).
+
 ## [0.1.2] - 2019-11-11
 
 ### Added
