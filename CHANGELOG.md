@@ -11,6 +11,15 @@ Here are a few common issues.
 
 ## [Unreleased]
 
+## [0.1.4] - 2021-04-14
+
+### Changed
+
+- Security vulnerability upgrade of library [lodash](https://github.com/lodash/lodash) to 4.17.21.
+- Security vulnerability upgrade of library [y18n](https://github.com/yargs/y18n) to 4.0.1.
+- Security vulnerability upgrade of library [trim](https://github.com/Trott/trim) to 1.0.1.
+- Upgrade of library [franc](https://github.com/wooorm/franc) to 5.0.0.
+
 ## [0.1.3] - 2020-03-25
 
 ### Changed

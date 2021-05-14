@@ -9,7 +9,7 @@
 		"url": "https://github.com/michelcaradec/string-checker-js"
 	},
 	"license": "MIT",
-	"version": "0.1.3",
+	"version": "0.1.4",
 	"engines": {
 		"vscode": "^1.38.0"
 	},
@@ -312,7 +312,9 @@
 	},
 	"dependencies": {
 		"escape-string-regexp": "^2.0.0",
-		"typescript": "^3.7.2",
-		"franc": "^4.1.0"
+		"franc": "^5.0.0",
+		"trigram-utils": "^2.0.0",
+		"trim": "^1.0.1",
+		"typescript": "^3.7.2"
 	}
 }
